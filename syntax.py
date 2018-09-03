@@ -272,4 +272,102 @@ class Timer(object):
         print('Start...')
 # 这就是动态语言的“鸭子类型”，它并不要求严格的继承体系，一个对象只要“看起来像鸭子，走起路来像鸭子”，那它就可以被看做是鸭子。
 
+# 判断对象类型
+# <class 'int'>
+type(123)
+# <class 'str'>
+type('hello')
+# <class 'NoneType'>
+type(None)
+# <class 'builtin_function_or_method'>
+type(abs)
+
+# 判断类型是否一样
+type(123)==int
+type('hello')==str
+# 要判断一个对象是否是函数, 可以使用types模块中定义的常量
+import types
+def fn():
+    pass
+type(fn)==types.FunctionType
+type(abs)==types.BuiltinFunctionType
+type(lambda x: x)==types.LambdaType
+type((x for x in range(10)))==types.GeneratorType
+# 判断对象类型 isinstance 判断的是一个对象是否是该类型本身，或者位于该类型的父继承链上。
+# 判断一个变量是否是某些类型中的一种，比如下面的代码就可以判断是否是list或者tuple：
+isinstance([1, 2, 3], (list, tuple))
+
+# 获得一个对象的所有属性和方法，可以使用dir()函数，它返回一个包含字符串的list
+dir('hello')
+# 类似__xxx__的属性和方法在Python中都是有特殊用途的，比如__len__方法返回长度。在Python中，如果你调用len()函数试图获取一个对象的长度，实际上，在len()函数内部，它自动去调用该对象的__len__()方法，所以，下面的代码是等价的：
+len('hello')
+'hello'.__len__()
+# getattr()、setattr()以及hasattr()，我们可以直接操作一个对象的状态：
+class MyObject(object):
+    def __init__(self):
+        self.x = 9
+    def power(self):
+        return self.x * self.x
+obj = MyObject()
+hasattr(obj, 'x')
+setattr(obj, 'y', 19)
+getattr(obj, 'y')
+# 如果试图获取不存在的属性，会抛出AttributeError的错误：
+getattr(obj, 'z')
+# 可以传入一个default参数，如果属性不存在，就返回默认值：
+getattr(obj, 'z', 404)
+
+# 实例属性和类属性
+# 由于Python是动态语言，根据类创建的实例可以任意绑定属性。
+# 给实例绑定属性的方法是通过实例变量，或者通过self变量：
+class Student(object):
+    def __init__(self, name):
+        self.name = name
+s = Student('Bob')
+s.score = 90
+
+# 限制实例的属性 __slots__
+class Student(object):
+    __slots__ = ('name', 'age') # 用tuple定义允许绑定的属性名称
+
+# getter setter @property
+# 为了限制score的范围，可以通过一个set_score()方法来设置成绩，再通过一个get_score()来获取成绩，这样，在set_score()方法里，就可以检查参数：
+class Student(object):
+    def get_score(self):
+         return self._score
+    def set_score(self, value):
+        if not isinstance(value, int):
+            raise ValueError('score must be an integer!')
+        if value < 0 or value > 100:
+            raise ValueError('score must between 0 ~ 100!')
+        self._score = value
+# Python内置的@property装饰器就是负责把一个方法变成属性调用的：
+class Student(object):
+    @property
+    def score(self):
+        return self._score
+    @score.setter
+    def score(self, value):
+        if not isinstance(value, int):
+            raise ValueError('score must be an integer!')
+        if value < 0 or value > 100:
+            raise ValueError('score must between 0 ~ 100!')
+        self._score = value
+# 定义只读属性，只定义getter方法，不定义setter方法就是一个只读属性：
+class Student(object):
+    @property
+    def birth(self):
+        return self._birth
+    @birth.setter
+    def birth(self, value):
+        self._birth = value
+    @property
+    def age(self):
+        return 2015 - self._birth
+
+# 多重继承 MixIn设计
+# Python自带了TCPServer和UDPServer这两类网络服务，而要同时服务多个用户就必须使用多进程或多线程模型，这两种模型由ForkingMixIn和ThreadingMixIn提供。通过组合，我们就可以创造出合适的服务来。
+# 比如，编写一个多进程模式的TCP服务，定义如下：
+class MyTCPServer(TCPServer, ForkingMixIn):
+    pass
 
