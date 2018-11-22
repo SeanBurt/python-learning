@@ -15,7 +15,7 @@ else:
 # 函数
 # 如果没有return语句，函数执行完毕后也会返回结果，只是结果为None。return None可以简写为return。
 def my_abs(x):
-    if not isinstance(x. (int, float)):
+    if not isinstance(x, (int, float)):
         raise TabError('bad operand type')
     if x >= 0:
         return x
