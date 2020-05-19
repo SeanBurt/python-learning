@@ -1,5 +1,9 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
+# @File    : spider.py
+# @Time    : 2020/05/17
+# @Author  : mazc (mzc_2015@163.com)
 
 import requests
 from bs4 import BeautifulSoup
